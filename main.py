@@ -3,6 +3,7 @@ import sklearn as sklearn
 from sklearn.datasets import make_classification
 from sklearn.neighbors import NearestNeighbors
 from collections import Counter
+from imblearn.over_sampling.base import BaseOverSampler
 
 print("\nImplementacja metody Adasyn\n")
 
@@ -12,36 +13,41 @@ x, y = sklearn.datasets.make_classification(n_samples=200, n_features=2, n_infor
 print("Liczba próbek (1 -> klasa większościowa, 2 -> klasa mniejszościowa):")
 print(" - przed oversamplingiem: ", Counter(y))
 
+
 # (2) Defining Adasyn
-def Adasyn(x, y, weights):
+class Adasyn(BaseOverSampler):
+    def __init__(self):
+        pass
+    def _fit_resample(self, x, y, weights):
+        # (3) Finding the minority class
+        numberOfSamples = Counter(y)
+        minorityClassSamples = min(numberOfSamples.values())
 
-    # (3) Finding the minority class
-    numberOfSamples = Counter(y)
-    minorityClassSamples = min(numberOfSamples.values())
+        # (4) Calculating how many samples are needed to be add in minority class
+        majorityClassSamples = max(numberOfSamples.values())
+        samplesToAdd = int(weights * (majorityClassSamples - minorityClassSamples))
 
-    # (4) Calculating how many samples are needed to be add in minority class
-    majorityClassSamples = max(numberOfSamples.values())
-    samplesToAdd = int(weights * (majorityClassSamples - minorityClassSamples))
+        # (5) Creating the List for minority class
+        minorityClass = np.where(y == 0)[0]
+        listOfMinorityClassSamples = x[minorityClass]
 
-    # (5) Creating the List for minority class
-    minorityClass = np.where(y == 0)[0]
-    listOfMinorityClassSamples = x[minorityClass]
+        # (6) Using Nearest Neighbors algorithm
+        nbrs = NearestNeighbors().fit(listOfMinorityClassSamples)
+        nbrsOfSample = nbrs.kneighbors(listOfMinorityClassSamples, return_distance=False)
 
-    # (6) Using Nearest Neighbors algorithm
-    nbrs = NearestNeighbors().fit(listOfMinorityClassSamples)
-    nbrsOfSample = nbrs.kneighbors(listOfMinorityClassSamples, return_distance=False)
+        # (7) Generating samples in minority class
+        for i in range(samplesToAdd):
+            randomSample = np.random.randint(len(minorityClass))
+            randomSampleNBRS = np.random.choice(nbrsOfSample[randomSample])
+            syntheticSample = listOfMinorityClassSamples[randomSample] + np.random.rand() * (
+                        listOfMinorityClassSamples[randomSampleNBRS] - listOfMinorityClassSamples[randomSample])
 
-    # (7) Generating samples in minority class
-    for i in range(samplesToAdd):
-        randomSample = np.random.randint(len(minorityClass))
-        randomSampleNBRS = np.random.choice(nbrsOfSample[randomSample])
-        syntheticSample = listOfMinorityClassSamples[randomSample] + np.random.rand() * (listOfMinorityClassSamples[randomSampleNBRS] - listOfMinorityClassSamples[randomSample])
+            x = np.concatenate((x, np.array([syntheticSample])))
+            y = np.concatenate((y, np.full(1, 0)))
 
-        x = np.concatenate((x, np.array([syntheticSample])))
-        y = np.concatenate((y, np.full(1, 0)))
+        return x, y
 
-    return x, y
+Adasyn = Adasyn()
+X, Y = Adasyn._fit_resample(x, y, 0.9)
 
-x_ada, y_ada = Adasyn(x, y, 0.9)
-
-print(" - po oversamplingu: ", Counter(y_ada))
+print(" - po oversamplingu: ", Counter(Y))
