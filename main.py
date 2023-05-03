@@ -4,6 +4,7 @@ from sklearn.datasets import make_classification
 from sklearn.neighbors import NearestNeighbors
 from collections import Counter
 from imblearn.over_sampling.base import BaseOverSampler
+from imblearn.over_sampling import ADASYN, SMOTE, BorderlineSMOTE
 
 print("\nImplementacja metody Adasyn\n")
 
@@ -49,5 +50,17 @@ class Adasyn(BaseOverSampler):
 
 Adasyn = Adasyn()
 X, Y = Adasyn._fit_resample(x, y, 0.9)
+print(" - po zaimplementowanym Adasynie: ", Counter(Y))
 
-print(" - po oversamplingu: ", Counter(Y))
+#Using imported Adasyn, Smote and Asmote for comparasion
+ADASYN = ADASYN()
+ada_x, ada_y = ADASYN.fit_resample(x, y)
+print(" - po zaimportowanym Adasynie: ", Counter(ada_y))
+
+sm = SMOTE()
+smote_x, smote_y = sm.fit_resample(x, y)
+print(" - po zaimportowanym Smote: ", Counter(smote_y))
+
+br = BorderlineSMOTE()
+br_x, br_y = br.fit_resample(x, y)
+print(" - po zaimportowanym BorderlineSmote: ", Counter(br_y))
