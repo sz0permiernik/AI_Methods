@@ -1,4 +1,4 @@
-# Metody sztucznej inteligencji
+# Metody Sztucznej Inteligencji
 
 ## Metoda Adasyn
 
