@@ -2,44 +2,46 @@ import numpy as np
 import sklearn as sklearn
 from sklearn.datasets import make_classification
 from sklearn.metrics import accuracy_score, precision_score, f1_score, recall_score
-from sklearn.model_selection import train_test_split
-from sklearn.neighbors import NearestNeighbors
+from sklearn.model_selection import StratifiedKFold
+from sklearn.neighbors import NearestNeighbors, KNeighborsClassifier
 from collections import Counter
 from imblearn.over_sampling.base import BaseOverSampler
 from imblearn.over_sampling import ADASYN, SMOTE, BorderlineSMOTE
-from sklearn.tree import DecisionTreeClassifier
-
 
 print("\nImplementacja metody Adasyn\n")
 
-# (1) Generating data
+# Generating data
 x, y = sklearn.datasets.make_classification(n_samples=200, n_features=2, n_informative=2, n_redundant=0, n_repeated=0,
                                             weights=[0.1, 0.9])
 print("Liczba próbek (1 -> klasa większościowa, 2 -> klasa mniejszościowa):")
-print(" - Przed oversamplingiem: ", Counter(y), "\n")
+print(" | Przed oversamplingiem: ", Counter(y), "\n")
 
-# (2) Defining Adasyn
+# Using KneighborsClassifier and StratifiedKFold
+knc = KNeighborsClassifier(n_neighbors=5)
+skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=25)
+
+# Defining Adasyn
 class imAdasyn(BaseOverSampler):
     def __init__(self):
         pass
     def _fit_resample(self, x, y, weights):
-        # (3) Finding the minority class
+        # Finding the minority class
         numberOfSamples = Counter(y)
         minorityClassSamples = min(numberOfSamples.values())
 
-        # (4) Calculating how many samples are needed to be add in minority class
+        # Calculating how many samples are needed to be add in minority class
         majorityClassSamples = max(numberOfSamples.values())
         samplesToAdd = int(weights * (majorityClassSamples - minorityClassSamples))
 
-        # (5) Creating the List for minority class
+        # Creating the List for minority class
         minorityClass = np.where(y == 0)[0]
         listOfMinorityClassSamples = x[minorityClass]
 
-        # (6) Using Nearest Neighbors algorithm
+        # Using Nearest Neighbors algorithm
         nbrs = NearestNeighbors().fit(listOfMinorityClassSamples)
         nbrsOfSample = nbrs.kneighbors(listOfMinorityClassSamples, return_distance=False)
 
-        # (7) Generating samples in minority class
+        # Generating samples in minority class
         for i in range(samplesToAdd):
             randomSample = np.random.randint(len(minorityClass))
             randomSampleNBRS = np.random.choice(nbrsOfSample[randomSample])
@@ -51,116 +53,156 @@ class imAdasyn(BaseOverSampler):
 
         return x, y
 
-# (8) Division into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.2, train_size=0.8)
-
-# (9) Using implemented Adasyn
+# Using implemented Adasyn
 imAdasyn = imAdasyn()
 im_x, im_y = imAdasyn._fit_resample(x, y, 0.9)
-print(" - Po zaimplementowanym Adasynie: ", Counter(im_y))
+print(" | Po zaimplementowanym Adasynie: ", Counter(im_y), "\n-- dla każdego folda po kolei:")
 
-# Using accuracy_score, precision_score, f1_score and recall_score for implement Adasyn
-X_train_resample, y_train_resample = imAdasyn._fit_resample(X_train, y_train, 0.9)
+# Empty arrays for metric scores
+accArray = []
+precArray = []
+f1Array = []
+recArray = []
 
-clf = DecisionTreeClassifier(random_state=8)
-clf.fit(X_train_resample, y_train_resample)
+# Division into training and testing sets
+for i, (train_index, test_index) in enumerate(skf.split(x, y)):
 
-y_predict = clf.predict(X_test)
+    X_train_resample, y_train_resample = imAdasyn._fit_resample(x[train_index], y[train_index], 0.9)
+    knc.fit(X_train_resample, y_train_resample)
+    y_predict = knc.predict(x[test_index])
 
-acc = accuracy_score(y_test, y_predict)
-prec = precision_score(y_test, y_predict, average='weighted')
-f1 = f1_score(y_test, y_predict, average='weighted')
-rec = recall_score(y_test, y_predict, average='weighted')
+    # Using accuracy_score, precision_score, f1_score and recall_score for implement Adasyn
+    acc = accuracy_score(y[test_index], y_predict)
+    prec = precision_score(y[test_index], y_predict)
+    f1 = f1_score(y[test_index], y_predict)
+    rec = recall_score(y[test_index], y_predict)
 
-print("-- dokładność wynosi :", acc)
-print("-- precyzja wynosi :", prec)
-print("-- f1 wynosi :", f1)
-print("-- recall wynosi :", rec, "\n")
+    accArray.append(acc)
+    precArray.append(prec)
+    f1Array.append(f1)
+    recArray.append(rec)
 
-#np.save('dokladnosc.npy', acc)
-#np.save('precyzja.npy', prec)
-#np.save('f1.npy', f1)
-#np.save('recall.npy', rec)
+print("-- dokładność wynosi:", accArray)
+print("-- precyzja wynosi:", precArray)
+print("-- f1 wynosi:", f1Array)
+print("-- recall wynosi:", recArray, "\n")
 
-# (10) Using imported ADASYN, SMOTE and BorderlineSMOTE for comparison
+#np.save('dokladnosc.npy', accArray)
+#np.save('precyzja.npy', precArray)
+#np.save('f1.npy', f1Array)
+#np.save('recall.npy', recArray)
+
+# Using imported ADASYN, SMOTE and BorderlineSMOTE for comparison
 ADASYN = ADASYN()
 ada_x, ada_y = ADASYN.fit_resample(x, y)
-print(" - Po zaimportowanym Adasynie: ", Counter(ada_y))
+print(" | Po zaimportowanym Adasynie: ", Counter(ada_y), "\n-- dla każdego folda po kolei:")
 
-# Using accuracy_score, precision_score, f1_score and recall_score for ADASYN
-X_train_resample_ada, y_train_resample_ada = ADASYN.fit_resample(X_train, y_train)
+# Empty arrays for metric scores
+ada_accArray = []
+ada_precArray = []
+ada_f1Array = []
+ada_recArray = []
 
-ada_clf = DecisionTreeClassifier(random_state=8)
-ada_clf.fit(X_train_resample_ada, y_train_resample_ada)
+# Division into training and testing sets
+for i, (train_index, test_index) in enumerate(skf.split(x, y)):
 
-ada_y_predict = ada_clf.predict(X_test)
+    X_train_resample_ada, y_train_resample_ada = ADASYN.fit_resample(x[train_index], y[train_index])
+    knc.fit(X_train_resample_ada, y_train_resample_ada)
+    y_predict = knc.predict(x[test_index])
 
-ada_acc = accuracy_score(y_test, ada_y_predict)
-ada_prec = precision_score(y_test, ada_y_predict, average='weighted')
-ada_f1 = f1_score(y_test, y_predict, average='weighted')
-ada_rec = recall_score(y_test, y_predict, average='weighted')
+    # Using accuracy_score, precision_score, f1_score and recall_score for ADASYN
+    ada_acc = accuracy_score(y[test_index], y_predict)
+    ada_prec = precision_score(y[test_index], y_predict)
+    ada_f1 = f1_score(y[test_index], y_predict)
+    ada_rec = recall_score(y[test_index], y_predict)
 
-print("-- dokładność wynosi :", ada_acc)
-print("-- precyzja wynosi :", ada_prec)
-print("-- f1 wynosi :", ada_f1)
-print("-- recall wynosi :", ada_rec, "\n")
+    ada_accArray.append(ada_acc)
+    ada_precArray.append(ada_prec)
+    ada_f1Array.append(ada_f1)
+    ada_recArray.append(ada_rec)
 
-#np.save('dokladnoscAda.npy', ada_acc)
-#np.save('precyzjaAda.npy', ada_prec)
-#np.save('f1Ada.npy', ada_f1)
-#np.save('recallAda.npy', ada_rec)
+print("-- dokładność wynosi:", ada_accArray)
+print("-- precyzja wynosi:", ada_precArray)
+print("-- f1 wynosi:", ada_f1Array)
+print("-- recall wynosi:", ada_recArray, "\n")
+
+#np.save('dokladnoscAda.npy', ada_accArray)
+#np.save('precyzjaAda.npy', ada_precArray)
+#np.save('f1Ada.npy', ada_f1Array)
+#np.save('recallAda.npy', ada_recArray)
 
 sm = SMOTE()
 smote_x, smote_y = sm.fit_resample(x, y)
-print(" - Po zaimportowanym SMOTE: ", Counter(smote_y))
+print(" | Po zaimportowanym SMOTE: ", Counter(smote_y), "\n-- dla każdego folda po kolei:")
 
-# Using accuracy_score, precision_score, f1_score and recall_score for SMOTE
-X_train_resample_sm, y_train_resample_sm = sm.fit_resample(X_train, y_train)
+sm_accArray = []
+sm_precArray = []
+sm_f1Array = []
+sm_recArray = []
 
-sm_clf = DecisionTreeClassifier(random_state=8)
-sm_clf.fit(X_train_resample_sm, y_train_resample_sm)
+# Division into training and testing sets
+for i, (train_index, test_index) in enumerate(skf.split(x, y)):
 
-sm_y_predict = sm_clf.predict(X_test)
+    X_train_resample_sm, y_train_resample_sm = sm.fit_resample(x[train_index], y[train_index])
+    knc.fit(X_train_resample_sm, y_train_resample_sm)
+    y_predict = knc.predict(x[test_index])
 
-sm_acc = accuracy_score(y_test, sm_y_predict)
-sm_prec = precision_score(y_test, sm_y_predict, average='weighted')
-sm_f1 = f1_score(y_test, y_predict, average='weighted')
-sm_rec = recall_score(y_test, y_predict, average='weighted')
+    # Using accuracy_score, precision_score, f1_score and recall_score for SMOTE
+    sm_acc = accuracy_score(y[test_index], y_predict)
+    sm_prec = precision_score(y[test_index], y_predict)
+    sm_f1 = f1_score(y[test_index], y_predict)
+    sm_rec = recall_score(y[test_index], y_predict)
 
-print("-- dokładność wynosi :", sm_acc)
-print("-- precyzja wynosi :", sm_prec)
-print("-- f1 wynosi :", sm_f1)
-print("-- recall wynosi :", sm_rec, "\n")
+    sm_accArray.append(sm_acc)
+    sm_precArray.append(sm_prec)
+    sm_f1Array.append(sm_f1)
+    sm_recArray.append(sm_rec)
 
-#np.save('dokladnoscSm.npy', sm_acc)
-#np.save('precyzjaSm.npy', sm_prec)
-#np.save('f1Sm.npy', sm_f1)
-#np.save('recallSm.npy', sm_rec)
+print("-- dokładność wynosi :", sm_accArray)
+print("-- precyzja wynosi :", sm_precArray)
+print("-- f1 wynosi :", sm_f1Array)
+print("-- recall wynosi :", sm_recArray, "\n")
+
+#np.save('dokladnoscSm.npy', sm_accArray)
+#np.save('precyzjaSm.npy', sm_precArray)
+#np.save('f1Sm.npy', sm_f1Array)
+#np.save('recallSm.npy', sm_recArray)
 
 br = BorderlineSMOTE()
 br_x, br_y = br.fit_resample(x, y)
-print(" - Po zaimportowanym BorderlineSMOTE: ", Counter(br_y))
+print(" | Po zaimportowanym BorderlineSMOTE: ", Counter(br_y), "\n-- dla każdego folda po kolei:")
 
-# Using accuracy_score, precision_score, f1_score and recall_score for BorderlineSMOTE
-X_train_resample_br, y_train_resample_br = br.fit_resample(X_train, y_train)
+br_accArray = []
+br_precArray = []
+br_f1Array = []
+br_recArray = []
 
-br_clf = DecisionTreeClassifier(random_state=8)
-br_clf.fit(X_train_resample_br, y_train_resample_br)
+# Division into training and testing sets
+for i, (train_index, test_index) in enumerate(skf.split(x, y)):
 
-br_y_predict = br_clf.predict(X_test)
+    X_train_resample_br, y_train_resample_br = br.fit_resample(x[train_index], y[train_index])
+    knc.fit(X_train_resample_br, y_train_resample_br)
+    y_predict = knc.predict(x[test_index])
 
-br_acc = accuracy_score(y_test, br_y_predict)
-br_prec = precision_score(y_test, br_y_predict, average='weighted')
-br_f1 = f1_score(y_test, y_predict, average='weighted')
-br_rec = recall_score(y_test, y_predict, average='weighted')
+    # Using accuracy_score, precision_score, f1_score and recall_score for BorderlineSMOTE
+    br_acc = accuracy_score(y[test_index], y_predict)
+    br_prec = precision_score(y[test_index], y_predict)
+    br_f1 = f1_score(y[test_index], y_predict)
+    br_rec = recall_score(y[test_index], y_predict)
 
-print("-- dokładność wynosi :", br_acc)
-print("-- precyzja wynosi :", br_prec)
-print("-- f1 wynosi :", br_f1)
-print("-- recall wynosi :", br_rec, "\n")
+    br_accArray.append(br_acc)
+    br_precArray.append(br_prec)
+    br_f1Array.append(br_f1)
+    br_recArray.append(br_rec)
 
-#np.save('dokladnoscBr.npy', br_acc)
-#np.save('precyzjaBr.npy', br_acc)
-#np.save('f1Br.npy', br_acc)
-#np.save('recallBr.npy', br_acc)
+print("-- dokładność wynosi :", br_accArray)
+print("-- precyzja wynosi :", br_precArray)
+print("-- f1 wynosi :", br_f1Array)
+print("-- recall wynosi :", br_recArray)
+
+#np.save('dokladnoscBr.npy', br_accArray)
+#np.save('precyzjaBr.npy', br_precArray)
+#np.save('f1Br.npy', br_f1Array)
+#np.save('recallBr.npy', br_recArray)
+
 
