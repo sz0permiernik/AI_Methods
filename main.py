@@ -18,7 +18,7 @@ print(" | Przed oversamplingiem: ", Counter(y), "\n")
 
 # Using KneighborsClassifier and StratifiedKFold
 knc = KNeighborsClassifier(n_neighbors=5)
-skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=25)
+skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
 # Defining Adasyn
 class imAdasyn(BaseOverSampler):
