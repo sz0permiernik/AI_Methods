@@ -67,8 +67,11 @@ recArray = []
 # Division into training and testing sets
 for i, (train_index, test_index) in enumerate(skf.split(x, y)):
 
-    X_train_resample, y_train_resample = imAdasyn._fit_resample(x[train_index], y[train_index], 0.9)
-    knc.fit(X_train_resample, y_train_resample)
+    x_train, y_train = x[train_index], y[train_index]
+    x_test, y_test = x[test_index], y[test_index]
+
+    x_train_resample, y_train_resample = imAdasyn._fit_resample(x_train, y_train, 0.9)
+    knc.fit(x_train_resample, y_train_resample)
     y_predict = knc.predict(x[test_index])
 
     # Using accuracy_score, precision_score, f1_score and recall_score for implement Adasyn
@@ -106,8 +109,11 @@ ada_recArray = []
 # Division into training and testing sets
 for i, (train_index, test_index) in enumerate(skf.split(x, y)):
 
-    X_train_resample_ada, y_train_resample_ada = ADASYN.fit_resample(x[train_index], y[train_index])
-    knc.fit(X_train_resample_ada, y_train_resample_ada)
+    x_train, y_train = x[train_index], y[train_index]
+    x_test, y_test = x[test_index], y[test_index]
+
+    x_train_resample_ada, y_train_resample_ada = ADASYN.fit_resample(x_train, y_train)
+    knc.fit(x_train_resample_ada, y_train_resample_ada)
     y_predict = knc.predict(x[test_index])
 
     # Using accuracy_score, precision_score, f1_score and recall_score for ADASYN
@@ -143,8 +149,11 @@ sm_recArray = []
 # Division into training and testing sets
 for i, (train_index, test_index) in enumerate(skf.split(x, y)):
 
-    X_train_resample_sm, y_train_resample_sm = sm.fit_resample(x[train_index], y[train_index])
-    knc.fit(X_train_resample_sm, y_train_resample_sm)
+    x_train, y_train = x[train_index], y[train_index]
+    x_test, y_test = x[test_index], y[test_index]
+
+    x_train_resample_sm, y_train_resample_sm = sm.fit_resample(x_train, y_train)
+    knc.fit(x_train_resample_sm, y_train_resample_sm)
     y_predict = knc.predict(x[test_index])
 
     # Using accuracy_score, precision_score, f1_score and recall_score for SMOTE
@@ -180,8 +189,11 @@ br_recArray = []
 # Division into training and testing sets
 for i, (train_index, test_index) in enumerate(skf.split(x, y)):
 
-    X_train_resample_br, y_train_resample_br = br.fit_resample(x[train_index], y[train_index])
-    knc.fit(X_train_resample_br, y_train_resample_br)
+    x_train, y_train = x[train_index], y[train_index]
+    x_test, y_test = x[test_index], y[test_index]
+
+    x_train_resample_br, y_train_resample_br = br.fit_resample(x_train, y_train)
+    knc.fit(x_train_resample_br, y_train_resample_br)
     y_predict = knc.predict(x[test_index])
 
     # Using accuracy_score, precision_score, f1_score and recall_score for BorderlineSMOTE
