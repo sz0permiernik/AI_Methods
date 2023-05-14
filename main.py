@@ -7,14 +7,23 @@ from sklearn.neighbors import KNeighborsClassifier
 from collections import Counter
 from imblearn.over_sampling import ADASYN, SMOTE, BorderlineSMOTE
 from ImplementedAdasyn import ImplementedAdasyn
+import pandas as pd
+
 
 print("\nImplementacja metody Adasyn\n")
 
 # Generating data
 x, y = sklearn.datasets.make_classification(n_samples=200, n_features=2, n_informative=2, n_redundant=0, n_repeated=0,
                                             weights=[0.1, 0.9])
-print("Liczba próbek (1 -> klasa większościowa, 2 -> klasa mniejszościowa):")
+print("Liczba próbek wygenerowanych syntetycznie (1 -> klasa większościowa, 2 -> klasa mniejszościowa):")
 print(" | Przed oversamplingiem: ", Counter(y), "\n")
+
+# Real data
+excelData = pd.read_excel(r'data.xlsx')
+realData = pd.DataFrame(excelData)
+print(realData)
+#real_x = realData[:, :-1]
+#real_y = realData[:, -1]
 
 # Using KNeighborsClassifier and StratifiedKFold
 knc = KNeighborsClassifier(n_neighbors=5)
@@ -33,7 +42,6 @@ recArray = []
 
 # Division into training and testing sets
 for i, (train_index, test_index) in enumerate(skf.split(x, y)):
-
     x_train, y_train = x[train_index], y[train_index]
     x_test, y_test = x[test_index], y[test_index]
 
@@ -57,10 +65,10 @@ print("-- precyzja wynosi:", precArray)
 print("-- f1 wynosi:", f1Array)
 print("-- recall wynosi:", recArray, "\n")
 
-#np.save('dokladnosc.npy', accArray)
-#np.save('precyzja.npy', precArray)
-#np.save('f1.npy', f1Array)
-#np.save('recall.npy', recArray)
+# np.save('dokladnosc.npy', accArray)
+# np.save('precyzja.npy', precArray)
+# np.save('f1.npy', f1Array)
+# np.save('recall.npy', recArray)
 
 # Using imported ADASYN, SMOTE and BorderlineSMOTE for comparison
 ADASYN = ADASYN()
@@ -75,7 +83,6 @@ ada_recArray = []
 
 # Division into training and testing sets
 for i, (train_index, test_index) in enumerate(skf.split(x, y)):
-
     x_train, y_train = x[train_index], y[train_index]
     x_test, y_test = x[test_index], y[test_index]
 
@@ -99,10 +106,10 @@ print("-- precyzja wynosi:", ada_precArray)
 print("-- f1 wynosi:", ada_f1Array)
 print("-- recall wynosi:", ada_recArray, "\n")
 
-#np.save('dokladnoscAda.npy', ada_accArray)
-#np.save('precyzjaAda.npy', ada_precArray)
-#np.save('f1Ada.npy', ada_f1Array)
-#np.save('recallAda.npy', ada_recArray)
+# np.save('dokladnoscAda.npy', ada_accArray)
+# np.save('precyzjaAda.npy', ada_precArray)
+# np.save('f1Ada.npy', ada_f1Array)
+# np.save('recallAda.npy', ada_recArray)
 
 sm = SMOTE()
 smote_x, smote_y = sm.fit_resample(x, y)
@@ -115,7 +122,6 @@ sm_recArray = []
 
 # Division into training and testing sets
 for i, (train_index, test_index) in enumerate(skf.split(x, y)):
-
     x_train, y_train = x[train_index], y[train_index]
     x_test, y_test = x[test_index], y[test_index]
 
@@ -139,10 +145,10 @@ print("-- precyzja wynosi :", sm_precArray)
 print("-- f1 wynosi :", sm_f1Array)
 print("-- recall wynosi :", sm_recArray, "\n")
 
-#np.save('dokladnoscSm.npy', sm_accArray)
-#np.save('precyzjaSm.npy', sm_precArray)
-#np.save('f1Sm.npy', sm_f1Array)
-#np.save('recallSm.npy', sm_recArray)
+# np.save('dokladnoscSm.npy', sm_accArray)
+# np.save('precyzjaSm.npy', sm_precArray)
+# np.save('f1Sm.npy', sm_f1Array)
+# np.save('recallSm.npy', sm_recArray)
 
 br = BorderlineSMOTE()
 br_x, br_y = br.fit_resample(x, y)
@@ -155,7 +161,6 @@ br_recArray = []
 
 # Division into training and testing sets
 for i, (train_index, test_index) in enumerate(skf.split(x, y)):
-
     x_train, y_train = x[train_index], y[train_index]
     x_test, y_test = x[test_index], y[test_index]
 
@@ -179,7 +184,7 @@ print("-- precyzja wynosi :", br_precArray)
 print("-- f1 wynosi :", br_f1Array)
 print("-- recall wynosi :", br_recArray)
 
-#np.save('dokladnoscBr.npy', br_accArray)
-#np.save('precyzjaBr.npy', br_precArray)
-#np.save('f1Br.npy', br_f1Array)
-#np.save('recallBr.npy', br_recArray)
+# np.save('dokladnoscBr.npy', br_accArray)
+# np.save('precyzjaBr.npy', br_precArray)
+# np.save('f1Br.npy', br_f1Array)
+# np.save('recallBr.npy', br_recArray)
