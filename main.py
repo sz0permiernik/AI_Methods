@@ -3,10 +3,10 @@ import sklearn as sklearn
 from sklearn.datasets import make_classification
 from sklearn.metrics import accuracy_score, precision_score, f1_score, recall_score
 from sklearn.model_selection import StratifiedKFold
-from sklearn.neighbors import NearestNeighbors, KNeighborsClassifier
+from sklearn.neighbors import KNeighborsClassifier
 from collections import Counter
-from imblearn.over_sampling.base import BaseOverSampler
 from imblearn.over_sampling import ADASYN, SMOTE, BorderlineSMOTE
+from ImplementedAdasyn import ImplementedAdasyn
 
 print("\nImplementacja metody Adasyn\n")
 
@@ -16,46 +16,13 @@ x, y = sklearn.datasets.make_classification(n_samples=200, n_features=2, n_infor
 print("Liczba próbek (1 -> klasa większościowa, 2 -> klasa mniejszościowa):")
 print(" | Przed oversamplingiem: ", Counter(y), "\n")
 
-# Using KneighborsClassifier and StratifiedKFold
+# Using KNeighborsClassifier and StratifiedKFold
 knc = KNeighborsClassifier(n_neighbors=5)
 skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
-# Defining Adasyn
-class imAdasyn(BaseOverSampler):
-    def __init__(self):
-        pass
-    def _fit_resample(self, x, y, weights):
-        # Finding the minority class
-        numberOfSamples = Counter(y)
-        minorityClassSamples = min(numberOfSamples.values())
-
-        # Calculating how many samples are needed to be add in minority class
-        majorityClassSamples = max(numberOfSamples.values())
-        samplesToAdd = int(weights * (majorityClassSamples - minorityClassSamples))
-
-        # Creating the List for minority class
-        minorityClass = np.where(y == 0)[0]
-        listOfMinorityClassSamples = x[minorityClass]
-
-        # Using Nearest Neighbors algorithm
-        nbrs = NearestNeighbors().fit(listOfMinorityClassSamples)
-        nbrsOfSample = nbrs.kneighbors(listOfMinorityClassSamples, return_distance=False)
-
-        # Generating samples in minority class
-        for i in range(samplesToAdd):
-            randomSample = np.random.randint(len(minorityClass))
-            randomSampleNBRS = np.random.choice(nbrsOfSample[randomSample])
-            syntheticSample = listOfMinorityClassSamples[randomSample] + np.random.rand() * (
-                        listOfMinorityClassSamples[randomSampleNBRS] - listOfMinorityClassSamples[randomSample])
-
-            x = np.concatenate((x, np.array([syntheticSample])))
-            y = np.concatenate((y, np.full(1, 0)))
-
-        return x, y
-
 # Using implemented Adasyn
-imAdasyn = imAdasyn()
-im_x, im_y = imAdasyn._fit_resample(x, y, 0.9)
+implementedAdasyn = ImplementedAdasyn()
+im_x, im_y = implementedAdasyn._fit_resample(x, y, 0.9)
 print(" | Po zaimplementowanym Adasynie: ", Counter(im_y), "\n-- dla każdego folda po kolei:")
 
 # Empty arrays for metric scores
@@ -70,7 +37,7 @@ for i, (train_index, test_index) in enumerate(skf.split(x, y)):
     x_train, y_train = x[train_index], y[train_index]
     x_test, y_test = x[test_index], y[test_index]
 
-    x_train_resample, y_train_resample = imAdasyn._fit_resample(x_train, y_train, 0.9)
+    x_train_resample, y_train_resample = implementedAdasyn._fit_resample(x_train, y_train, 0.9)
     knc.fit(x_train_resample, y_train_resample)
     y_predict = knc.predict(x[test_index])
 
@@ -216,5 +183,3 @@ print("-- recall wynosi :", br_recArray)
 #np.save('precyzjaBr.npy', br_precArray)
 #np.save('f1Br.npy', br_f1Array)
 #np.save('recallBr.npy', br_recArray)
-
-
