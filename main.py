@@ -1,4 +1,3 @@
-import columns as columns
 import numpy as np
 import sklearn as sklearn
 from sklearn.datasets import make_classification
@@ -9,6 +8,7 @@ from collections import Counter
 from imblearn.over_sampling import ADASYN, SMOTE, BorderlineSMOTE
 from ImplementedAdasyn import ImplementedAdasyn
 import pandas as pd
+from scipy import stats
 
 print("\nImplementacja metody Adasyn\n")
 
@@ -22,7 +22,7 @@ print("Liczba próbek wygenerowanych syntetycznie (1 -> klasa większościowa, 0
 print(" | Przed oversamplingiem: ", Counter(y), "\n")
 
 # Real data
-excelData = pd.read_excel('data.xlsx')
+excelData = pd.read_excel('data.xlsx', engine='openpyxl')
 real_y = excelData['Class']
 real_x = excelData.drop('Class', axis=1)
 
@@ -65,15 +65,18 @@ for i, (train_index, test_index) in enumerate(skf.split(x, y)):
     f1Array.append(f1)
     recArray.append(rec)
 
-print("-- dokładność wynosi:", accArray)
-print("-- precyzja wynosi:", precArray)
-print("-- f1 wynosi:", f1Array)
-print("-- recall wynosi:", recArray, "\n")
+print(f"-- dokładność wynosi:", accArray, ", natomiast odchylenie", np.average(accArray))
+print(f"-- precyzja wynosi:", precArray, ", natomiast odchylenie", np.average(precArray))
+print(f"-- f1 wynosi:", f1Array, ", natomiast odchylenie", np.average(f1Array))
+print(f"-- recall wynosi:", recArray, ", natomiast odchylenie", np.average(recArray))
 
 np.save('dokladnosc.npy', accArray)
 np.save('precyzja.npy', precArray)
 np.save('f1.npy', f1Array)
 np.save('recall.npy', recArray)
+
+shapiro_test = stats.shapiro(x_train_resample)
+print(shapiro_test, "\n")
 
 # Using imported ADASYN, SMOTE and BorderlineSMOTE for comparison
 ada = ADASYN()
@@ -88,8 +91,8 @@ def testing(x, y, method, skfold):
     f1Array = []
     recArray = []
 
-    ob_x, ob_y = method.fit_resample(x, y)
-    print(f" | Po zaimportowanym {method}: ", Counter(ob_y), "\n-- dla każdego folda po kolei:")
+    method_x, method_y = method.fit_resample(x, y)
+    print(f" | Po zaimportowanym {method}: ", Counter(method_y), "\n-- dla każdego folda po kolei:")
 
     # Division into training and testing sets
     for i, (train_index, test_index) in enumerate(skfold.split(x, y)):
@@ -114,16 +117,18 @@ def testing(x, y, method, skfold):
         f1Array.append(f1)
         recArray.append(rec)
 
-    print(f"-- dokładność {method} wynosi:", accArray)
-    print(f"-- precyzja {method} wynosi:", precArray)
-    print(f"-- f1 {method} wynosi:", f1Array)
-    print(f"-- recall {method} wynosi:", recArray, "\n")
+    print(f"-- dokładność {method} wynosi:", accArray, ", natomiast odchylenie", np.average(accArray))
+    print(f"-- precyzja {method} wynosi:", precArray, ", natomiast odchylenie", np.average(precArray))
+    print(f"-- f1 {method} wynosi:", f1Array, ", natomiast odchylenie", np.average(f1Array))
+    print(f"-- recall {method} wynosi:", recArray, ", natomiast odchylenie", np.average(recArray))
 
     np.save(f'dokladnosc{method}.npy', accArray)
     np.save(f'precyzja{method}.npy', precArray)
     np.save(f'f1{method}.npy', f1Array)
     np.save(f'recall{method}.npy', recArray)
 
+    shapiro_test = stats.shapiro(method_x)
+    print(shapiro_test, "\n")
 
 # Testing methods for synthetic data
 testing(x, y, ada, skf)
@@ -131,6 +136,7 @@ testing(x, y, sm, skf)
 testing(x, y, br, skf)
 
 # Testing methods for real data
-#testing(real_x, real_y, ada, skf)
-#testing(real_x, real_y, sm, skf)
-#testing(real_x, real_y, br, skf)
+# testing(real_x, real_y, ada, skf)
+# testing(real_x, real_y, sm, skf)
+# testing(real_x, real_y, br, skf)
+
