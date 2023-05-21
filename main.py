@@ -10,6 +10,7 @@ from ImplementedAdasyn import ImplementedAdasyn
 import pandas as pd
 from scipy import stats
 import matplotlib.pyplot as plt
+import openpyxl
 
 print("\nImplementacja metody Adasyn\n")
 
