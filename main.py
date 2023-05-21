@@ -9,6 +9,7 @@ from imblearn.over_sampling import ADASYN, SMOTE, BorderlineSMOTE
 from ImplementedAdasyn import ImplementedAdasyn
 import pandas as pd
 from scipy import stats
+import matplotlib.pyplot as plt
 
 print("\nImplementacja metody Adasyn\n")
 
@@ -21,11 +22,14 @@ x, y = sklearn.datasets.make_classification(n_samples=200, n_features=2, n_infor
 print("Liczba próbek wygenerowanych syntetycznie (1 -> klasa większościowa, 0 -> klasa mniejszościowa):")
 print(" | Przed oversamplingiem: ", Counter(y), "\n")
 
+plt.scatter(x[:, 0], x[:, 1], c=y)
+plt.title('Dane syntetyczne przed oversamplingiem')
+plt.savefig('Dane_syntetyczne_przed_oversamplingiem.png')
+
 # Real data
 excelData = pd.read_excel('data.xlsx', engine='openpyxl')
 real_y = excelData['Class']
 real_x = excelData.drop('Class', axis=1)
-
 real_y = real_y.drop(columns=0, axis=1)
 
 print(real_x, real_y)
@@ -77,6 +81,10 @@ np.save('recall.npy', recArray)
 
 shapiro_test = stats.shapiro(x_train_resample)
 print(shapiro_test, "\n")
+
+plt.scatter(im_x[:, 0], im_x[:, 1], c=im_y)
+plt.title('Dane syntetyczne po zaimplementowanym Adasynie')
+plt.savefig('Dane_syntetyczne_po_zaimplementowanym_Adasynie.png')
 
 # Using imported ADASYN, SMOTE and BorderlineSMOTE for comparison
 ada = ADASYN()
@@ -130,6 +138,11 @@ def testing(x, y, method, skfold):
     shapiro_test = stats.shapiro(method_x)
     print(shapiro_test, "\n")
 
+    plt.scatter(method_x[:, 0], method_x[:, 1], c=method_y)
+    plt.title(f'Dane syntetyczne po zaimportowanym {method}')
+    plt.savefig(f'Dane_syntetyczne_po_zaimportowanym_{method}.png')
+
+
 # Testing methods for synthetic data
 testing(x, y, ada, skf)
 testing(x, y, sm, skf)
@@ -139,4 +152,3 @@ testing(x, y, br, skf)
 # testing(real_x, real_y, ada, skf)
 # testing(real_x, real_y, sm, skf)
 # testing(real_x, real_y, br, skf)
-
