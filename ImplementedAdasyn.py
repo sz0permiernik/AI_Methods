@@ -1,5 +1,3 @@
-from abc import ABC
-
 from imblearn.over_sampling.base import BaseOverSampler
 from sklearn.neighbors import NearestNeighbors
 import numpy as np
@@ -10,7 +8,7 @@ class ImplementedAdasyn(BaseOverSampler):
     def __init__(self):
         super().__init__()
 
-    def _fit_resample(self, x, y, weights):
+    def _fit_resample(self, x, y, weights=0.9):
         # Finding the minority class
         numberOfSamples = Counter(y)
         minorityClassSamples = min(numberOfSamples.values())
