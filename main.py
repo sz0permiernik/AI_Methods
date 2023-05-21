@@ -1,3 +1,4 @@
+import columns as columns
 import numpy as np
 import sklearn as sklearn
 from sklearn.datasets import make_classification
@@ -17,15 +18,19 @@ skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=random_sweep)
 # Generating data
 x, y = sklearn.datasets.make_classification(n_samples=200, n_features=2, n_informative=2, n_redundant=0, n_repeated=0,
                                             weights=[0.1, 0.9], random_state=random_sweep, shuffle=True)
-print("Liczba próbek wygenerowanych syntetycznie (1 -> klasa większościowa, 2 -> klasa mniejszościowa):")
+print("Liczba próbek wygenerowanych syntetycznie (1 -> klasa większościowa, 0 -> klasa mniejszościowa):")
 print(" | Przed oversamplingiem: ", Counter(y), "\n")
 
 # Real data
-excelData = pd.read_excel(r'data.xlsx')
-realData = pd.DataFrame(excelData)
-print(realData)
-# real_x = realData[:, :-1]
-# real_y = realData[:, -1]
+excelData = pd.read_excel('data.xlsx')
+real_y = excelData['Class']
+real_x = excelData.drop('Class', axis=1)
+
+real_y = real_y.drop(columns=0, axis=1)
+
+print(real_x, real_y)
+print("Liczba próbek z rzeczywistego zbioru danych (1 -> klasa większościowa, 0 -> klasa mniejszościowa):")
+print(" | Przed oversamplingiem: ", Counter(real_y), "\n")
 
 # Using implemented Adasyn
 implementedAdasyn = ImplementedAdasyn()
@@ -70,11 +75,11 @@ np.save('precyzja.npy', precArray)
 np.save('f1.npy', f1Array)
 np.save('recall.npy', recArray)
 
-
 # Using imported ADASYN, SMOTE and BorderlineSMOTE for comparison
 ada = ADASYN()
 br = BorderlineSMOTE()
 sm = SMOTE()
+
 
 def testing(x, y, method, skfold):
     # Empty arrays for metric scores
@@ -88,7 +93,6 @@ def testing(x, y, method, skfold):
 
     # Division into training and testing sets
     for i, (train_index, test_index) in enumerate(skfold.split(x, y)):
-
         # Using KNeighborsClassifier
         knc = KNeighborsClassifier(n_neighbors=5)
 
@@ -120,7 +124,13 @@ def testing(x, y, method, skfold):
     np.save(f'f1{method}.npy', f1Array)
     np.save(f'recall{method}.npy', recArray)
 
-# Testing methods
+
+# Testing methods for synthetic data
 testing(x, y, ada, skf)
 testing(x, y, sm, skf)
 testing(x, y, br, skf)
+
+# Testing methods for real data
+#testing(real_x, real_y, ada, skf)
+#testing(real_x, real_y, sm, skf)
+#testing(real_x, real_y, br, skf)
