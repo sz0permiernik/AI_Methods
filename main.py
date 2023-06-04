@@ -1,5 +1,6 @@
 import numpy as np
 import sklearn as sklearn
+from scipy import stats
 from sklearn.datasets import make_classification
 from sklearn.manifold import TSNE
 from sklearn.metrics import accuracy_score, precision_score, f1_score, recall_score
@@ -27,7 +28,7 @@ print(" | Przed oversamplingiem: ", Counter(y), "\n")
 
 plt.scatter(x[:, 0], x[:, 1], c=y)
 plt.title('Dane syntetyczne przed oversamplingiem')
-plt.savefig('Dane_syntetyczne_przed_oversamplingiem.png')
+plt.savefig('dane_syntetyczne_przed_oversamplingiem.png')
 
 # Real data
 realData = np.loadtxt('dane_rzeczywiste.csv', delimiter=',')
@@ -52,7 +53,7 @@ def testing(x, y, method, skfold, data):
     recArray = np.zeros(5)
 
     method_x, method_y = method.fit_resample(x, y)
-    print(f" | Po zaimportowanym {method}: ", Counter(method_y), "\n-- dla każdego folda po kolei:")
+    print(f" | Po zaimportowanym {method} dla {data}: ", Counter(method_y), "\n-- dla każdego folda po kolei:")
 
     # Division into training and testing sets
     for i, (train_index, test_index) in enumerate(skfold.split(x, y)):
@@ -77,10 +78,10 @@ def testing(x, y, method, skfold, data):
         f1Array[i] = f1
         recArray[i] = rec
 
-    print(f"-- dokładność {method} wynosi:", accArray, ", natomiast odchylenie:", np.std(accArray))
-    print(f"-- precyzja {method} wynosi:", precArray, ", natomiast odchylenie:", np.std(precArray))
-    print(f"-- f1 {method} wynosi:", f1Array, ", natomiast odchylenie:", np.std(f1Array))
-    print(f"-- recall {method} wynosi:", recArray, ", natomiast odchylenie:", np.std(recArray), "\n")
+    print(f"-- dokładność {method} dla {data} wynosi:", accArray, ", natomiast odchylenie:", np.std(accArray))
+    print(f"-- precyzja {method} dla {data}wynosi:", precArray, ", natomiast odchylenie:", np.std(precArray))
+    print(f"-- f1 {method} dla {data}wynosi:", f1Array, ", natomiast odchylenie:", np.std(f1Array))
+    print(f"-- recall {method} dla {data}wynosi:", recArray, ", natomiast odchylenie:", np.std(recArray), "\n")
 
     resultTableMetricsFolds = [[f"{method}", "Dokladnosc", "Precyzja", "F1", "Recall"],
                                ["Fold 1", accArray[0], precArray[0], f1Array[0], recArray[0]],
@@ -93,21 +94,26 @@ def testing(x, y, method, skfold, data):
     with open(f'tabela{method}.tex', 'w') as file:
         file.write(tabulateResults)
 
-    np.save(f'dokladnosc{method}dla{data}.npy', np.mean(accArray))
-    np.save(f'precyzja{method}dla{data}.npy', np.mean(precArray))
-    np.save(f'f1{method}dla{data}.npy', np.mean(f1Array))
-    np.save(f'recall{method}dla{data}.npy', np.mean(recArray))
+    np.save(f'dokladnosc{method}dla{data}.npy', accArray)
+    np.save(f'precyzja{method}dla{data}.npy', precArray)
+    np.save(f'f1{method}dla{data}.npy', f1Array)
+    np.save(f'recall{method}dla{data}.npy', recArray)
+
+    np.save(f'uśrednionaDokladnosc{method}dla{data}.npy', np.mean(accArray))
+    np.save(f'uśrednionaPrecyzja{method}dla{data}.npy', np.mean(precArray))
+    np.save(f'uśrednioneF1{method}dla{data}.npy', np.mean(f1Array))
+    np.save(f'uśrednionyRecall{method}dla{data}.npy', np.mean(recArray))
 
     if data == synt:
         plt.scatter(method_x[:, 0], method_x[:, 1], c=method_y)
         plt.title(f'Dane {data} po {method}')
-        plt.savefig(f'Dane_{data}_po_{method}.png')
+        plt.savefig(f'dane_{data}_po_{method}.png')
 
     if data == real:
         tsne_result = tsne.fit_transform(method_x)
         plt.scatter(tsne_result[:, 0], tsne_result[:, 1], c=method_y)
         plt.title(f'Dane {data} po {method}')
-        plt.savefig(f'Dane_{data}_po_{method}.png')
+        plt.savefig(f'dane_{data}_po_{method}.png')
 
 
 # Testing methods for synthetic data
