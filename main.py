@@ -8,7 +8,6 @@ from sklearn.neighbors import KNeighborsClassifier
 from collections import Counter
 from imblearn.over_sampling import ADASYN, SMOTE, BorderlineSMOTE
 from ImplementedAdasyn import ImplementedAdasyn
-from scipy import stats
 import matplotlib.pyplot as plt
 from tabulate import tabulate
 
@@ -16,8 +15,8 @@ print("\nImplementacja metody Adasyn\n")
 
 random_sweep = 42
 skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=random_sweep)
-real = "rzeczywiste"
-synt = "syntetyczne"
+real = "Rzeczywiste"
+synt = "Syntetyczne"
 tsne = TSNE()
 
 # Generating data
@@ -78,29 +77,26 @@ def testing(x, y, method, skfold, data):
         f1Array[i] = f1
         recArray[i] = rec
 
-    print(f"-- dokładność {method} wynosi:", accArray, ", natomiast odchylenie", np.average(accArray))
-    print(f"-- precyzja {method} wynosi:", precArray, ", natomiast odchylenie", np.average(precArray))
-    print(f"-- f1 {method} wynosi:", f1Array, ", natomiast odchylenie", np.average(f1Array))
-    print(f"-- recall {method} wynosi:", recArray, ", natomiast odchylenie", np.average(recArray), "\n")
+    print(f"-- dokładność {method} wynosi:", accArray, ", natomiast odchylenie:", np.std(accArray))
+    print(f"-- precyzja {method} wynosi:", precArray, ", natomiast odchylenie:", np.std(precArray))
+    print(f"-- f1 {method} wynosi:", f1Array, ", natomiast odchylenie:", np.std(f1Array))
+    print(f"-- recall {method} wynosi:", recArray, ", natomiast odchylenie:", np.std(recArray), "\n")
 
-    resultTable = [["Metryka", "Dokladnosc", "Precyzja", "F1", "Recall"],
-               ["Fold 1", accArray[0], precArray[0], f1Array[0], recArray[0]],
-               ["Fold 2", accArray[1], precArray[1], f1Array[1], recArray[1]],
-               ["Fold 3", accArray[2], precArray[2], f1Array[2], recArray[2]],
-               ["Fold 4", accArray[3], precArray[3], f1Array[3], recArray[3]],
-               ["Fold 5", accArray[4], precArray[4], f1Array[4], recArray[4]]]
+    resultTableMetricsFolds = [[f"{method}", "Dokladnosc", "Precyzja", "F1", "Recall"],
+                               ["Fold 1", accArray[0], precArray[0], f1Array[0], recArray[0]],
+                               ["Fold 2", accArray[1], precArray[1], f1Array[1], recArray[1]],
+                               ["Fold 3", accArray[2], precArray[2], f1Array[2], recArray[2]],
+                               ["Fold 4", accArray[3], precArray[3], f1Array[3], recArray[3]],
+                               ["Fold 5", accArray[4], precArray[4], f1Array[4], recArray[4]]]
 
-    tabulateResults = tabulate(resultTable, tablefmt='latex_raw')
+    tabulateResults = tabulate(resultTableMetricsFolds, tablefmt='latex')
     with open(f'tabela{method}.tex', 'w') as file:
         file.write(tabulateResults)
 
-    np.save(f'dokladnosc{method}.npy', accArray)
-    np.save(f'precyzja{method}.npy', precArray)
-    np.save(f'f1{method}.npy', f1Array)
-    np.save(f'recall{method}.npy', recArray)
-
-    #shapiro_test = stats.shapiro(method_x)
-    #print(shapiro_test, "\n")
+    np.save(f'dokladnosc{method}dla{data}.npy', np.mean(accArray))
+    np.save(f'precyzja{method}dla{data}.npy', np.mean(precArray))
+    np.save(f'f1{method}dla{data}.npy', np.mean(f1Array))
+    np.save(f'recall{method}dla{data}.npy', np.mean(recArray))
 
     if data == synt:
         plt.scatter(method_x[:, 0], method_x[:, 1], c=method_y)
