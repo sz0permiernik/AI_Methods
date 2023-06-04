@@ -141,10 +141,5 @@ with open('realShapiroResults.tex', 'w') as file2:
 with open('synShapiroResults.tex', 'w') as file3:
     file3.write(tableSynShapiro)
 
-print(tableRealShapiro)
-print(tableSynShapiro)
-
-print(synShapiroDokladnoscSMOTE)
-print(realShapiroDokladnoscSMOTE)
 
 
