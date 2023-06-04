@@ -17,6 +17,7 @@ random_sweep = 42
 skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=random_sweep)
 real = "rzeczywiste"
 synt = "syntetyczne"
+tsne = TSNE()
 
 # Generating data
 x, y = sklearn.datasets.make_classification(n_samples=200, n_features=2, n_informative=2, n_redundant=0, n_repeated=0,
@@ -95,7 +96,6 @@ def testing(x, y, method, skfold, data):
         plt.savefig(f'Dane_{data}_po_{method}.png')
 
     if data == real:
-        tsne = TSNE()
         tsne_result = tsne.fit_transform(method_x)
         plt.scatter(tsne_result[:, 0], tsne_result[:, 1], c=method_y)
         plt.title(f'Dane {data} po {method}')
