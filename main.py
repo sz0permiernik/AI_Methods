@@ -1,6 +1,7 @@
 import numpy as np
 import sklearn as sklearn
 from sklearn.datasets import make_classification
+from sklearn.manifold import TSNE
 from sklearn.metrics import accuracy_score, precision_score, f1_score, recall_score
 from sklearn.model_selection import StratifiedKFold
 from sklearn.neighbors import KNeighborsClassifier
@@ -88,9 +89,17 @@ def testing(x, y, method, skfold, data):
     shapiro_test = stats.shapiro(method_x)
     print(shapiro_test, "\n")
 
-    plt.scatter(method_x[:, 0], method_x[:, 1], c=method_y)
-    plt.title(f'Dane {data} po zaimportowanym {method}')
-    plt.savefig(f'Dane_{data}_po_zaimportowanym_{method}.png')
+    if data == synt:
+        plt.scatter(method_x[:, 0], method_x[:, 1], c=method_y)
+        plt.title(f'Dane {data} po {method}')
+        plt.savefig(f'Dane_{data}_po_{method}.png')
+
+    if data == real:
+        tsne = TSNE()
+        tsne_result = tsne.fit_transform(method_x)
+        plt.scatter(tsne_result[:, 0], tsne_result[:, 1], c=method_y)
+        plt.title(f'Dane {data} po {method}')
+        plt.savefig(f'Dane_{data}_po_{method}.png')
 
 
 # Testing methods for synthetic data
