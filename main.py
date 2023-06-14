@@ -84,11 +84,16 @@ def testing(x, y, method, skfold, data):
     print(f"-- recall {method} dla {data}wynosi:", recArray, ", natomiast odchylenie:", np.std(recArray), "\n")
 
     resultTableMetricsFolds = [[f"{method}", "Dokladnosc", "Precyzja", "F1", "Recall"],
-                               ["Fold 1", accArray[0], precArray[0], f1Array[0], recArray[0]],
-                               ["Fold 2", accArray[1], precArray[1], f1Array[1], recArray[1]],
-                               ["Fold 3", accArray[2], precArray[2], f1Array[2], recArray[2]],
-                               ["Fold 4", accArray[3], precArray[3], f1Array[3], recArray[3]],
-                               ["Fold 5", accArray[4], precArray[4], f1Array[4], recArray[4]]]
+                               ["Fold 1", round(accArray[0], 4), round(precArray[0], 4), round(f1Array[0], 4),
+                                round(recArray[0], 4)],
+                               ["Fold 2", round(accArray[1], 4), round(precArray[1], 4), round(f1Array[1], 4),
+                                round(recArray[1], 4)],
+                               ["Fold 3", round(accArray[2], 4), round(precArray[2], 4), round(f1Array[2], 4),
+                                round(recArray[2], 4)],
+                               ["Fold 4", round(accArray[3], 4), round(precArray[3], 4), round(f1Array[3], 4),
+                                round(recArray[3], 4)],
+                               ["Fold 5", round(accArray[4], 4), round(precArray[4], 4), round(f1Array[4], 4),
+                                round(recArray[4], 4)]]
 
     tabulateResults = tabulate(resultTableMetricsFolds, tablefmt='latex')
     with open(f'tabela{method}.tex', 'w') as file:
@@ -99,10 +104,15 @@ def testing(x, y, method, skfold, data):
     np.save(f'f1{method}dla{data}.npy', f1Array)
     np.save(f'recall{method}dla{data}.npy', recArray)
 
-    np.save(f'uśrednionaDokladnosc{method}dla{data}.npy', np.mean(accArray))
-    np.save(f'uśrednionaPrecyzja{method}dla{data}.npy', np.mean(precArray))
-    np.save(f'uśrednioneF1{method}dla{data}.npy', np.mean(f1Array))
-    np.save(f'uśrednionyRecall{method}dla{data}.npy', np.mean(recArray))
+    # np.save(f'uśrednionaDokladnosc{method}dla{data}.npy', np.mean(accArray))
+    # np.save(f'uśrednionaPrecyzja{method}dla{data}.npy', np.mean(precArray))
+    # np.save(f'uśrednioneF1{method}dla{data}.npy', np.mean(f1Array))
+    # np.save(f'uśrednionyRecall{method}dla{data}.npy', np.mean(recArray))
+
+    # np.save(f'uśrednionaDokladnosc{method}dla{data}.npy', np.std(accArray))
+    # np.save(f'uśrednionaPrecyzja{method}dla{data}.npy', np.std(precArray))
+    # np.save(f'uśrednioneF1{method}dla{data}.npy', np.std(f1Array))
+    # np.save(f'uśrednionyRecall{method}dla{data}.npy', np.std(recArray))
 
     if data == synt:
         plt.scatter(method_x[:, 0], method_x[:, 1], c=method_y)
