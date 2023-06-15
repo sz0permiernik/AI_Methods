@@ -42,61 +42,36 @@ synPrecyzjaSMOTE = np.load('precyzjaSMOTE()dlaSyntetyczne.npy')
 synF1SMOTE = np.load('f1SMOTE()dlaSyntetyczne.npy')
 synRecallSMOTE = np.load('recallSMOTE()dlaSyntetyczne.npy')
 
-resultTableRealMean = [["Metryki/Metody", "Dokladnosc", "Precyzja", "F1", "Recall"],
-                   ["Zaimplementowany Adasyn", round(np.mean(realDokladnoscImplementedAdasyn), 4), round(np.mean(realPrecyzjaImplementedAdasyn), 4),
-                    round(np.mean(realF1ImplementedAdasyn), 4), round(np.mean(realRecallImplementedAdasyn), 4)],
-                   ["Zaimportowany Adasyn", round(np.mean(realDokladnoscADASYN), 4), round(np.mean(realPrecyzjaADASYN), 4),
-                    round(np.mean(realF1ADASYN), 4), round(np.mean(realRecallADASYN), 4)],
-                   ["BorderlineSMOTE", round(np.mean(realDokladnoscBorderlineSMOTE), 4), round(np.mean(realPrecyzjaBorderlineSMOTE), 4),
-                    round(np.mean(realF1BorderlineSMOTE), 4), round(np.mean(realRecallBorderlineSMOTE), 4)],
-                   ["SMOTE", round(np.mean(realDokladnoscSMOTE), 4), round(np.mean(realPrecyzjaSMOTE), 4),
-                    round(np.mean(realF1SMOTE), 4), round(np.mean(realRecallSMOTE), 4)]]
+resultTableRealMeanStd = [["Metody/Metryki", "Dokladnosc", "Precyzja", "F1", "Recall"],
+                   ["Zaimplementowany Adasyn", f"{round(np.mean(realDokladnoscImplementedAdasyn), 4)} ± {round(np.std(realDokladnoscImplementedAdasyn), 4)}", f"{round(np.mean(realPrecyzjaImplementedAdasyn), 4)} ± {round(np.std(realPrecyzjaImplementedAdasyn), 4)}",
+                    f"{round(np.mean(realF1ImplementedAdasyn), 4)} ± {round(np.std(realF1ImplementedAdasyn), 4)}", f"{round(np.mean(realRecallImplementedAdasyn), 4)} ± {round(np.std(realRecallImplementedAdasyn), 4)}"],
+                   ["Zaimportowany Adasyn", f"{round(np.mean(realDokladnoscADASYN), 4)} ± {round(np.std(realDokladnoscADASYN), 4)}", f"{round(np.mean(realPrecyzjaADASYN), 4)} ± {round(np.std(realPrecyzjaADASYN), 4)}",
+                    f"{round(np.mean(realF1ADASYN), 4)} ± {round(np.std(realF1ADASYN), 4)}", f"{round(np.mean(realRecallADASYN), 4)} ± {round(np.std(realRecallADASYN), 4)}"],
+                   ["BorderlineSMOTE", f"{round(np.mean(realDokladnoscBorderlineSMOTE), 4)} ± {round(np.std(realDokladnoscBorderlineSMOTE), 4)}", f"{round(np.mean(realPrecyzjaBorderlineSMOTE), 4)} ± {round(np.std(realPrecyzjaBorderlineSMOTE), 4)}",
+                    f"{round(np.mean(realF1BorderlineSMOTE), 4)} ± {round(np.std(realF1BorderlineSMOTE), 4)}", f"{round(np.mean(realRecallBorderlineSMOTE), 4)} ± {round(np.std(realRecallBorderlineSMOTE), 4)}"],
+                   ["SMOTE", f"{round(np.mean(realDokladnoscSMOTE), 4)} ± {round(np.std(realDokladnoscSMOTE), 4)}", f"{round(np.mean(realPrecyzjaSMOTE), 4)} ± {round(np.std(realPrecyzjaSMOTE), 4)}",
+                    f"{round(np.mean(realF1SMOTE), 4)} ± {round(np.std(realF1SMOTE), 4)}", f"{round(np.mean(realRecallSMOTE), 4)} ± {round(np.std(realRecallSMOTE), 4)}"]]
 
-resultTableSynMean = [["Metryki/Metody", "Dokladnosc", "Precyzja", "F1", "Recall"],
-                  ["Zaimplementowany Adasyn", round(np.mean(synDokladnoscImplementedAdasyn), 4), round(np.mean(synPrecyzjaImplementedAdasyn), 4),
-                   round(np.mean(synF1ImplementedAdasyn), 4), round(np.mean(synRecallImplementedAdasyn), 4)],
-                  ["Zaimportowany Adasyn", round(np.mean(synDokladnoscADASYN), 4), round(np.mean(synPrecyzjaADASYN), 4),
-                   round(np.mean(synF1ADASYN), 4), round(np.mean(synRecallADASYN), 4)],
-                  ["BorderlineSMOTE", round(np.mean(synDokladnoscBorderlineSMOTE), 4), round(np.mean(synPrecyzjaBorderlineSMOTE), 4),
-                   round(np.mean(synF1BorderlineSMOTE), 4), round(np.mean(synRecallBorderlineSMOTE), 4)],
-                  ["SMOTE", round(np.mean(synDokladnoscSMOTE), 4), round(np.mean(synPrecyzjaSMOTE), 4),
-                   round(np.mean(synF1SMOTE), 4), round(np.mean(synRecallSMOTE), 4)]]
+resultTableSynMeanStd = [["Metody/Metryki", "Dokladnosc", "Precyzja", "F1", "Recall"],
+                  ["Zaimplementowany Adasyn", f"{round(np.mean(synDokladnoscImplementedAdasyn), 4)} ± {round(np.std(synDokladnoscImplementedAdasyn), 4)}", f"{round(np.mean(synPrecyzjaImplementedAdasyn), 4)} ± {round(np.std(synPrecyzjaImplementedAdasyn), 4)}",
+                   f"{round(np.mean(synF1ImplementedAdasyn), 4)} ± {round(np.std(synF1ImplementedAdasyn), 4)}", f"{round(np.mean(synRecallImplementedAdasyn), 4)} ± {round(np.std(synRecallImplementedAdasyn), 4)}"],
+                  ["Zaimportowany Adasyn", f"{round(np.mean(synDokladnoscADASYN), 4)} ± {round(np.std(realDokladnoscADASYN), 4)}", f"{round(np.mean(synPrecyzjaADASYN), 4)} ± {round(np.std(synPrecyzjaADASYN), 4)}",
+                   f"{round(np.mean(synF1ADASYN), 4)} ± {round(np.std(synF1ADASYN), 4)}", f"{round(np.mean(synRecallADASYN), 4)} ± {round(np.std(synRecallADASYN), 4)}"],
+                  ["BorderlineSMOTE", f"{round(np.mean(synDokladnoscBorderlineSMOTE), 4)} ± {round(np.std(synDokladnoscBorderlineSMOTE), 4)}", f"{round(np.mean(synPrecyzjaBorderlineSMOTE), 4)} ± {round(np.std(synPrecyzjaBorderlineSMOTE), 4)}",
+                   f"{round(np.mean(synF1BorderlineSMOTE), 4)} ± {round(np.std(synF1BorderlineSMOTE), 4)}", f"{round(np.mean(synRecallBorderlineSMOTE), 4)} ± {round(np.std(synRecallBorderlineSMOTE), 4)}"],
+                  ["SMOTE", f"{round(np.mean(synDokladnoscSMOTE), 4)} ± {round(np.std(synDokladnoscSMOTE), 4)}", f"{round(np.mean(synPrecyzjaSMOTE), 4)} ± {round(np.std(synPrecyzjaSMOTE), 4)}",
+                   f"{round(np.mean(synF1SMOTE), 4)} ± {round(np.std(synF1SMOTE), 4)}", f"{round(np.mean(synRecallSMOTE), 4)} ± {round(np.std(synRecallSMOTE), 4)}"]]
 
-tableRealMean = tabulate(resultTableRealMean, tablefmt='latex')
-with open('tableRealMean.tex', 'w') as file:
-    file.write(tableRealMean)
+tableRealMeanStd = tabulate(resultTableRealMeanStd, tablefmt='latex')
+with open('tableRealMeanStd.tex', 'w') as file:
+    file.write(tableRealMeanStd)
 
-tableSynMean = tabulate(resultTableSynMean, tablefmt='latex')
-with open('tableSynMean.tex', 'w') as file1:
-    file1.write(tableSynMean)
+tableSynMeanStd = tabulate(resultTableSynMeanStd, tablefmt='latex')
+with open('tableSynMeanStd.tex', 'w') as file1:
+    file1.write(tableSynMeanStd)
 
-resultTableRealStd = [["Metryki/Metody", "Dokladnosc", "Precyzja", "F1", "Recall"],
-                   ["Zaimplementowany Adasyn", round(np.std(realDokladnoscImplementedAdasyn), 4), round(np.std(realPrecyzjaImplementedAdasyn), 4),
-                    round(np.std(realF1ImplementedAdasyn), 4), round(np.std(realRecallImplementedAdasyn), 4)],
-                   ["Zaimportowany Adasyn", round(np.std(realDokladnoscADASYN), 4), round(np.std(realPrecyzjaADASYN), 4),
-                    round(np.std(realF1ADASYN), 4), round(np.std(realRecallADASYN), 4)],
-                   ["BorderlineSMOTE", round(np.std(realDokladnoscBorderlineSMOTE), 4), round(np.std(realPrecyzjaBorderlineSMOTE), 4),
-                    round(np.std(realF1BorderlineSMOTE), 4), round(np.std(realRecallBorderlineSMOTE), 4)],
-                   ["SMOTE", round(np.std(realDokladnoscSMOTE), 4), round(np.std(realPrecyzjaSMOTE), 4),
-                    round(np.std(realF1SMOTE), 4), round(np.std(realRecallSMOTE), 4)]]
-
-resultTableSynStd = [["Metryki/Metody", "Dokladnosc", "Precyzja", "F1", "Recall"],
-                  ["Zaimplementowany Adasyn", round(np.std(synDokladnoscImplementedAdasyn), 4), round(np.std(synPrecyzjaImplementedAdasyn), 4),
-                   round(np.std(synF1ImplementedAdasyn), 4), round(np.std(synRecallImplementedAdasyn), 4)],
-                  ["Zaimportowany Adasyn", round(np.std(synDokladnoscADASYN), 4), round(np.std(synPrecyzjaADASYN), 4),
-                   round(np.std(synF1ADASYN), 4), round(np.std(synRecallADASYN), 4)],
-                  ["BorderlineSMOTE", round(np.std(synDokladnoscBorderlineSMOTE), 4), round(np.std(synPrecyzjaBorderlineSMOTE), 4),
-                   round(np.std(synF1BorderlineSMOTE), 4), round(np.std(synRecallBorderlineSMOTE), 4)],
-                  ["SMOTE", round(np.std(synDokladnoscSMOTE), 4), round(np.std(synPrecyzjaSMOTE), 4),
-                   round(np.std(synF1SMOTE), 4), round(np.std(synRecallSMOTE), 4)]]
-
-tableRealStd = tabulate(resultTableRealStd, tablefmt='latex')
-with open('tableRealStd.tex', 'w') as file11:
-    file11.write(tableRealStd)
-
-tableSynStd = tabulate(resultTableSynStd, tablefmt='latex')
-with open('tableSynStd.tex', 'w') as file12:
-    file12.write(tableSynStd)
+print(tableRealMeanStd)
+print(tableSynMeanStd)
 
 statistics, realTtestDokladnoscImplementedAdasynVsImplementedAdasyn = ttest_ind(realDokladnoscImplementedAdasyn, realDokladnoscImplementedAdasyn)
 statistics, realTtestDokladnoscImplementedAdasynVsADASYN = ttest_ind(realDokladnoscImplementedAdasyn, realDokladnoscADASYN)
@@ -115,7 +90,7 @@ statistics, realTtestDokladnoscSMOTEVsADASYN = ttest_ind(realDokladnoscSMOTE, re
 statistics, realTtestDokladnoscSMOTEVsBorderlineSMOTE = ttest_ind(realDokladnoscSMOTE, realDokladnoscBorderlineSMOTE)
 statistics, realTtestDokladnoscSMOTEVsSMOTE = ttest_ind(realDokladnoscSMOTE, realDokladnoscSMOTE)
 
-resultTableRealTtestDokladnosc = [["Metryki", "Zaimplementowany Adasyn", "Zaimportowany Adasyn", "BorderlineSMOTE", "SMOTE"],
+resultTableRealTtestDokladnosc = [["Metody", "Zaimplementowany Adasyn", "Zaimportowany Adasyn", "BorderlineSMOTE", "SMOTE"],
                    ["Zaimplementowany Adasyn", round(realTtestDokladnoscImplementedAdasynVsImplementedAdasyn, 4), round(realTtestDokladnoscImplementedAdasynVsADASYN, 4),
                     round(realTtestDokladnoscImplementedAdasynVsBorderlineSMOTE, 4), round(realTtestDokladnoscImplementedAdasynVsSMOTE, 4)],
                    ["Zaimportowany Adasyn", round(realTtestDokladnoscADASYNVsImplementedAdasyn, 4), round(realTtestDokladnoscADASYNVsADASYN, 4),
@@ -146,7 +121,7 @@ statistics, realTtestPrecyzjaSMOTEVsADASYN = ttest_ind(realPrecyzjaSMOTE, realPr
 statistics, realTtestPrecyzjaSMOTEVsBorderlineSMOTE = ttest_ind(realPrecyzjaSMOTE, realPrecyzjaBorderlineSMOTE)
 statistics, realTtestPrecyzjaSMOTEVsSMOTE = ttest_ind(realPrecyzjaSMOTE, realPrecyzjaSMOTE)
 
-resultTableRealTtestPrecyzja = [["Metryki", "Zaimplementowany Adasyn", "Zaimportowany Adasyn", "BorderlineSMOTE", "SMOTE"],
+resultTableRealTtestPrecyzja = [["Metody", "Zaimplementowany Adasyn", "Zaimportowany Adasyn", "BorderlineSMOTE", "SMOTE"],
                    ["Zaimplementowany Adasyn", round(realTtestPrecyzjaImplementedAdasynVsImplementedAdasyn, 4), round(realTtestPrecyzjaImplementedAdasynVsADASYN, 4),
                     round(realTtestPrecyzjaImplementedAdasynVsBorderlineSMOTE, 4), round(realTtestPrecyzjaImplementedAdasynVsSMOTE, 4)],
                    ["Zaimportowany Adasyn", round(realTtestPrecyzjaADASYNVsImplementedAdasyn, 4), round(realTtestPrecyzjaADASYNVsADASYN, 4),
@@ -177,7 +152,7 @@ statistics, realTtestF1SMOTEVsADASYN = ttest_ind(realF1SMOTE, realF1ADASYN)
 statistics, realTtestF1SMOTEVsBorderlineSMOTE = ttest_ind(realF1SMOTE, realF1BorderlineSMOTE)
 statistics, realTtestF1SMOTEVsSMOTE = ttest_ind(realF1SMOTE, realF1SMOTE)
 
-resultTableRealTtestF1 = [["Metryki", "Zaimplementowany Adasyn", "Zaimportowany Adasyn", "BorderlineSMOTE", "SMOTE"],
+resultTableRealTtestF1 = [["Metody", "Zaimplementowany Adasyn", "Zaimportowany Adasyn", "BorderlineSMOTE", "SMOTE"],
                    ["Zaimplementowany Adasyn", round(realTtestF1ImplementedAdasynVsImplementedAdasyn, 4), round(realTtestF1ImplementedAdasynVsADASYN, 4),
                     round(realTtestF1ImplementedAdasynVsBorderlineSMOTE, 4), round(realTtestF1ImplementedAdasynVsSMOTE, 4)],
                    ["Zaimportowany Adasyn", round(realTtestF1ADASYNVsImplementedAdasyn, 4), round(realTtestF1ADASYNVsADASYN, 4),
@@ -208,7 +183,7 @@ statistics, realTtestRecallSMOTEVsADASYN = ttest_ind(realRecallSMOTE, realRecall
 statistics, realTtestRecallSMOTEVsBorderlineSMOTE = ttest_ind(realRecallSMOTE, realRecallBorderlineSMOTE)
 statistics, realTtestRecallSMOTEVsSMOTE = ttest_ind(realRecallSMOTE, realRecallSMOTE)
 
-resultTableRealTtestRecall = [["Metryki", "Zaimplementowany Adasyn", "Zaimportowany Adasyn", "BorderlineSMOTE", "SMOTE"],
+resultTableRealTtestRecall = [["Metody", "Zaimplementowany Adasyn", "Zaimportowany Adasyn", "BorderlineSMOTE", "SMOTE"],
                    ["Zaimplementowany Adasyn", round(realTtestRecallImplementedAdasynVsImplementedAdasyn, 4), round(realTtestRecallImplementedAdasynVsADASYN, 4),
                     round(realTtestRecallImplementedAdasynVsBorderlineSMOTE, 4), round(realTtestRecallImplementedAdasynVsSMOTE, 4)],
                    ["Zaimportowany Adasyn", round(realTtestRecallADASYNVsImplementedAdasyn, 4), round(realTtestRecallADASYNVsADASYN, 4),
@@ -239,7 +214,7 @@ statistics, synTtestDokladnoscSMOTEVsADASYN = ttest_ind(synDokladnoscSMOTE, synD
 statistics, synTtestDokladnoscSMOTEVsBorderlineSMOTE = ttest_ind(synDokladnoscSMOTE, synDokladnoscBorderlineSMOTE)
 statistics, synTtestDokladnoscSMOTEVsSMOTE = ttest_ind(synDokladnoscSMOTE, synDokladnoscSMOTE)
 
-resultTableSynTtestDokladnosc = [["Metryki", "Zaimplementowany Adasyn", "Zaimportowany Adasyn", "BorderlineSMOTE", "SMOTE"],
+resultTableSynTtestDokladnosc = [["Metody", "Zaimplementowany Adasyn", "Zaimportowany Adasyn", "BorderlineSMOTE", "SMOTE"],
                    ["Zaimplementowany Adasyn", round(synTtestDokladnoscImplementedAdasynVsImplementedAdasyn, 4), round(synTtestDokladnoscImplementedAdasynVsADASYN, 4),
                     round(synTtestDokladnoscImplementedAdasynVsBorderlineSMOTE, 4), round(synTtestDokladnoscImplementedAdasynVsSMOTE, 4)],
                    ["Zaimportowany Adasyn", round(synTtestDokladnoscADASYNVsImplementedAdasyn, 4), round(synTtestDokladnoscADASYNVsADASYN, 4),
@@ -270,7 +245,7 @@ statistics, synTtestPrecyzjaSMOTEVsADASYN = ttest_ind(synPrecyzjaSMOTE, synPrecy
 statistics, synTtestPrecyzjaSMOTEVsBorderlineSMOTE = ttest_ind(synPrecyzjaSMOTE, synPrecyzjaBorderlineSMOTE)
 statistics, synTtestPrecyzjaSMOTEVsSMOTE = ttest_ind(synPrecyzjaSMOTE, synPrecyzjaSMOTE)
 
-resultTableSynTtestPrecyzja = [["Metryki", "Zaimplementowany Adasyn", "Zaimportowany Adasyn", "BorderlineSMOTE", "SMOTE"],
+resultTableSynTtestPrecyzja = [["Metody", "Zaimplementowany Adasyn", "Zaimportowany Adasyn", "BorderlineSMOTE", "SMOTE"],
                    ["Zaimplementowany Adasyn", round(synTtestPrecyzjaImplementedAdasynVsImplementedAdasyn, 4), round(synTtestPrecyzjaImplementedAdasynVsADASYN, 4),
                     round(synTtestPrecyzjaImplementedAdasynVsBorderlineSMOTE, 4), round(synTtestPrecyzjaImplementedAdasynVsSMOTE, 4)],
                    ["Zaimportowany Adasyn", round(synTtestPrecyzjaADASYNVsImplementedAdasyn, 4), round(synTtestPrecyzjaADASYNVsADASYN, 4),
@@ -301,7 +276,7 @@ statistics, synTtestF1SMOTEVsADASYN = ttest_ind(synF1SMOTE, synF1ADASYN)
 statistics, synTtestF1SMOTEVsBorderlineSMOTE = ttest_ind(synF1SMOTE, synF1BorderlineSMOTE)
 statistics, synTtestF1SMOTEVsSMOTE = ttest_ind(synF1SMOTE, synF1SMOTE)
 
-resultTableSynTtestF1 = [["Metryki", "Zaimplementowany Adasyn", "Zaimportowany Adasyn", "BorderlineSMOTE", "SMOTE"],
+resultTableSynTtestF1 = [["Metody", "Zaimplementowany Adasyn", "Zaimportowany Adasyn", "BorderlineSMOTE", "SMOTE"],
                    ["Zaimplementowany Adasyn", round(synTtestF1ImplementedAdasynVsImplementedAdasyn, 4), round(synTtestF1ImplementedAdasynVsADASYN, 4),
                     round(synTtestF1ImplementedAdasynVsBorderlineSMOTE, 4), round(synTtestF1ImplementedAdasynVsSMOTE, 4)],
                    ["Zaimportowany Adasyn", round(synTtestF1ADASYNVsImplementedAdasyn, 4), round(synTtestF1ADASYNVsADASYN, 4),
@@ -332,7 +307,7 @@ statistics, synTtestRecallSMOTEVsADASYN = ttest_ind(synRecallSMOTE, synRecallADA
 statistics, synTtestRecallSMOTEVsBorderlineSMOTE = ttest_ind(synRecallSMOTE, synRecallBorderlineSMOTE)
 statistics, synTtestRecallSMOTEVsSMOTE = ttest_ind(synRecallSMOTE, synRecallSMOTE)
 
-resultTableSynTtestRecall = [["Metryki", "Zaimplementowany Adasyn", "Zaimportowany Adasyn", "BorderlineSMOTE", "SMOTE"],
+resultTableSynTtestRecall = [["Metody", "Zaimplementowany Adasyn", "Zaimportowany Adasyn", "BorderlineSMOTE", "SMOTE"],
                    ["Zaimplementowany Adasyn", round(synTtestRecallImplementedAdasynVsImplementedAdasyn, 4), round(synTtestRecallImplementedAdasynVsADASYN, 4),
                     round(synTtestRecallImplementedAdasynVsBorderlineSMOTE, 4), round(synTtestRecallImplementedAdasynVsSMOTE, 4)],
                    ["Zaimportowany Adasyn", round(synTtestRecallADASYNVsImplementedAdasyn, 4), round(synTtestRecallADASYNVsADASYN, 4),

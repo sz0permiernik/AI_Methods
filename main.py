@@ -1,6 +1,5 @@
 import numpy as np
 import sklearn as sklearn
-from scipy import stats
 from sklearn.datasets import make_classification
 from sklearn.manifold import TSNE
 from sklearn.metrics import accuracy_score, precision_score, f1_score, recall_score
@@ -22,7 +21,7 @@ tsne = TSNE()
 
 # Generating data
 x, y = sklearn.datasets.make_classification(n_samples=200, n_features=2, n_informative=2, n_redundant=0, n_repeated=0,
-                                            weights=[0.1, 0.9], random_state=random_sweep, shuffle=True)
+                                            weights=[0.1, 0.9], random_state=random_sweep)
 print("Liczba próbek wygenerowanych syntetycznie (1 -> klasa większościowa, 0 -> klasa mniejszościowa):")
 print(" | Przed oversamplingiem: ", Counter(y), "\n")
 
@@ -43,7 +42,6 @@ iada = ImplementedAdasyn()
 ada = ADASYN()
 br = BorderlineSMOTE()
 sm = SMOTE()
-
 
 def testing(x, y, method, skfold, data):
     # Empty arrays for metric scores
